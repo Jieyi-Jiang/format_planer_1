@@ -15,16 +15,7 @@ void th_recive(Planner *planner)
 {
     while (true)
     {
-        try {
-            // 调用可能抛出异常的函数
-            planner->receive_data();
-        } catch (const std::exception& e) {
-            // 捕获标准异常
-            std::cerr << "receive Caught a standard exception: " << e.what() << std::endl;
-        } catch (...) {
-            // 捕获所有其他类型的异常
-            std::cerr << "receive Caught an unknown exception" << std::endl;
-        }
+        planner->receive_data();
     }
 }
 
@@ -52,9 +43,11 @@ void th_plan(Planner *planner)
 {
     while (true)
     {
-        
-        planner->plan();
-        Sleep(20);
+        planner->fomat_plan();
+        planner->plan(0);
+        planner->plan(1);
+        planner->plan(2);
+        Sleep(5);
     }
 }
 

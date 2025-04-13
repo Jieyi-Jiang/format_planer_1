@@ -212,7 +212,7 @@ void Planner::receive_data()
 void Planner::send_control(int robot_index)
 {
     while(!v_robot_ctrl_ready[robot_index]){
-        Sleep(10); // 每隔10毫秒检查一次
+        Sleep(1); // 每隔10毫秒检查一次
     };
     cout << "send control" << endl;
     mavlink_local_position_ned_t ctrl;
@@ -231,6 +231,8 @@ void Planner::send_control(int robot_index)
 void Planner::send_data()
 {
     send_control(0);
+    send_control(1);
+    send_control(2);
 }
 
 void Planner::send_heartbeat()
@@ -259,15 +261,23 @@ void Planner::car_planner_init(int robot_index)
     dwa_planners[0]->set_sim_t(0.1, 0.05);
     dwa_planners[0]->set_sim_step_num(21);
     dwa_planners[0]->set_sample_axis(35);
+    dwa_planners[1] = std::make_unique<BoundedDWA>();
+    dwa_planners[1]->set_sim_t(0.1, 0.05);
+    dwa_planners[1]->set_sim_step_num(21);
+    dwa_planners[1]->set_sample_axis(35);
+    dwa_planners[2] = std::make_unique<BoundedDWA>();
+    dwa_planners[2]->set_sim_t(0.1, 0.05);
+    dwa_planners[2]->set_sim_step_num(21);
+    dwa_planners[2]->set_sample_axis(35);
 }
 
 
 // 仅测试一辆车
-void Planner::plan()
+void Planner::plan(int robot_index)
 {
     auto time_start = std::chrono::high_resolution_clock::now();
-    dwa_planners[0]->set_sim_t(this->sim_time, this->run_time);
-    int car_index = 0;
+    int car_index = robot_index;
+    dwa_planners[car_index]->set_sim_t(this->sim_time, this->run_time);
     // 在 handle_receive 中已经更新了 v_robot_pos 和 v_robot_velocity
     // double car_v = v_robot_velocity[car_index].v_norm;
     double car_v = v_robot_ctrl_last[car_index].velocity;
@@ -291,7 +301,7 @@ void Planner::plan()
     {
         v_robot_ctrl[car_index].velocity = 0;
         v_robot_ctrl[car_index].theta = 0;
-        v_robot_ctrl_ready[0] = true;
+        v_robot_ctrl_ready[car_index] = true;
         cout << "arrive target" << endl;
         return;
     }
@@ -319,13 +329,23 @@ void Planner::plan()
     // 设置控制量
     v_robot_ctrl[car_index].velocity = ctrl_v;
     v_robot_ctrl[car_index].theta = ctrl_theta;
-    v_robot_ctrl_ready[0] = true;
+    v_robot_ctrl_ready[car_index] = true;
     // Sleep(time_ms);
     auto time_end = std::chrono::high_resolution_clock::now();
     // 输出花费的时间
     auto time_cost = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start).count();
     cout << "Time cost: " << time_cost*0.001 << " ms" << endl;
     cout << "========================================================================================" << endl;
+}
+
+void Planner::fomat_plan()
+{
+    v_target_pos[1].x = v_robot_pos[0].x - 0.5;
+    v_target_pos[1].y = v_robot_pos[0].y + 0.0;
+    v_target_pos[1].phi = v_robot_pos[0].phi;
+    v_target_pos[2].x = v_robot_pos[0].x - 1.3;
+    v_target_pos[2].y = v_robot_pos[0].y - 0.0;
+    v_target_pos[2].phi = v_robot_pos[0].phi;
 }
 
 void Planner::set_target_pos(int robot_index, double x, double y, double phi)

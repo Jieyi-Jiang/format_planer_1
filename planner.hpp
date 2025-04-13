@@ -81,10 +81,11 @@ public:
     void send_data();
     void config_network(const string multicast_ip, const string multicast_port, const string bind_port);
     void send_heartbeat();
-    void plan();
+    void plan(int robot_index);
     void car_planner_init(int robot_index);
     void send_control(int robot_index);
     void set_target_pos(int robot_index, double x, double y, double phi);
+    void fomat_plan();
 protected:
     MavlinkUDP *mav_udp;
     // int robot_num;
@@ -94,6 +95,11 @@ protected:
         {1, 0, 0},
         {1, 0, 0}
     };
+    vector<vector<double>> relation_pos ={
+        {-1.0, -1.0, 0.0},
+        {1.0, -1.0, 0.0},
+    };
+
     Vector3<bool> show_robor;
     double sim_time;
     double run_time;
