@@ -222,7 +222,7 @@ void Planner::send_control(int robot_index)
     cout << "ctrl.x: " << ctrl.x << endl;
     cout << "ctrl.y: " << ctrl.y << endl;
     uint8_t sysid = 0;
-    uint8_t compid = MAV_COMP_ID_SYSTEM_CONTROL;
+    uint8_t compid = MAV_COMP_ID_USER1 + (uint8_t)robot_index;
     mavlink_msg_local_position_ned_encode(sysid, compid, &msg, &ctrl);
     mav_udp->mavudp_send_message(&msg);
     v_robot_ctrl_ready[robot_index] = false;
@@ -242,7 +242,7 @@ void Planner::send_heartbeat()
         uint8_t sysid = 0;
         mavlink_message_t msg;
         mavlink_heartbeat_t heartbeat;
-        uint8_t compid = MAV_COMP_ID_SYSTEM_CONTROL;
+        uint8_t compid = MAV_COMP_ID_USER1;
         heartbeat.autopilot = MAV_AUTOPILOT_GENERIC; 
         heartbeat.type = MAV_TYPE_GCS;  // ground control station
         heartbeat.base_mode = 0;

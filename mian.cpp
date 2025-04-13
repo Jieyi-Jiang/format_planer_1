@@ -54,7 +54,7 @@ void th_plan(Planner *planner)
     {
         
         planner->plan();
-        Sleep(30);
+        Sleep(20);
     }
 }
 
@@ -104,7 +104,7 @@ int main_fuzzy()
     double obstacle = 10;
     // double output = fs.inference(goal, d_phi, obstacle);
     // std::cout << "Output: " << output << std::endl;
-    auto [w1, w2, w3, w4, w5] = fs.inference(goal, d_phi, obstacle);
+    auto [w1, w2, w3, w4, w5] = fs.inference(goal, d_phi);
     cout << "fuzzy out | " << w1 << " " << w2 << " " << w3 << " " << w4 << " " << w5 << endl;
     return 0;
 }

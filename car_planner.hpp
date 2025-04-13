@@ -19,21 +19,20 @@ public:
         d = 0.04;
         car = new CarModel();
         sim_t = 0.1;
-        v_max = 0.5;
-        v_min = -0.5;
-        a_max = 1.0;
-        a_min = -0.5;
+        v_max = 0.2;
+        v_min = -0.3;
+        a_max = 1.5;
+        a_min = -1.5;
         theta_max = 0.7;
         theta_min = -0.7;
-        a_theta_max = 1.5;
-        a_theta_min = -1.5;
+        a_theta_max = 2.0;
+        a_theta_min = -2.0;
         sample_axis = 9;
         sim_step_num = 5;
         fiction_factor = 0.3;
         gravity_acc = 9.8;
         v_now = 0.0;
         theta_now = 0.0;
-        car_pos = {0, 0, 0};
         target_pos = {0, 0, 0};
         pos_car = {0, 0, 0};
         car_xy = {0, 0};
@@ -94,10 +93,15 @@ public:
         // printf("cal_weight\n");
         FuzzySystem fs;
         double d_goal = std::sqrt(std::pow(goal_xy[0] - car_xy[0], 2) + std::pow(goal_xy[1] - car_xy[1], 2));
-        double d_phi = std::abs(car_phi - goal_phi);
+        // double d_phi = std::abs(car_phi - goal_phi);
+        vector<double> vect_car_phi = {std::cos(car_phi), std::sin(car_phi)};
+        vector<double> vect_goal_phi = {std::cos(goal_phi), std::sin(goal_phi)};
+        double d_phi = cal_angle_of_vect_rad(vect_car_phi, vect_goal_phi);
+        double d_vert = cal_distance_vertical(pos_car);
         double obstacle = 100;
-        // double fuzzy_output = fs.inference(d_goal, d_phi, obstacle);
-        auto [w1, w2, w3, w4, w5] = fs.inference(d_goal, d_phi, obstacle);
+        // auto [w1, w2, w3, w4, w5] = fs.inference(d_goal, d_phi);
+        auto [w1, w2, w3, w4, w5] = fs.inference(d_goal, d_phi, d_vert);
+        cout << "d_vert: " << d_vert << endl;
         double w_heading    = w1   * wg_heading;
         double w_dis_obs    = 1.0  * wg_dis_obs;
         double w_velocity   = w2   * wg_velocity;
@@ -170,7 +174,7 @@ public:
         std::vector<double> temp_list;
         for (int i = 0; i < trajectory_list.size(); ++i) {
             auto [x_list, y_list, phi_list, v_samp, theta_samp] = trajectory_list[i];
-            double temp = (temp >= 0) ? std::abs(v_samp) : std::abs(v_samp) / 2;
+            double temp = (temp >= 0) ? std::abs(v_samp) : std::abs(v_samp) / 3.0;
             temp_list.push_back(temp);
         }
         double max_value, index;
@@ -467,7 +471,7 @@ private:
     int sample_axis, sim_step_num;
     double fiction_factor, gravity_acc;
     double v_now, theta_now;
-    std::vector<double> car_pos, target_pos, pos_car, car_xy;
+    std::vector<double> target_pos, pos_car, car_xy;
     double car_phi;
     std::vector<double> pos_goal, goal_xy;
     double goal_phi;

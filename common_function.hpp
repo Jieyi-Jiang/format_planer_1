@@ -9,6 +9,7 @@
 double threshold(double x, double min, double max);
 
 double cal_angle_of_vect(std::vector<double> a, std::vector<double> b);
+double cal_angle_of_vect_rad(std::vector<double> a, std::vector<double> b);
 
 std::pair<double, int> find_max_and_index(const std::vector<double>& arr);
 

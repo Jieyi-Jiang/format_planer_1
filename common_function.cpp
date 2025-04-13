@@ -25,6 +25,16 @@ double cal_angle_of_vect(std::vector<double> a, std::vector<double> b) {
     double angle_deg = angle_rad * (180.0 / M_PI);
     return angle_deg;
 }
+double cal_angle_of_vect_rad(std::vector<double> a, std::vector<double> b) {
+    double dot_product = a[0] * b[0] + a[1] * b[1];
+    double magnitude_a = std::sqrt(a[0] * a[0] + a[1] * a[1]);
+    double magnitude_b = std::sqrt(b[0] * b[0] + b[1] * b[1]);
+    if (magnitude_a == 0) magnitude_a = 1e-20;
+    if (magnitude_b == 0) magnitude_b = 1e-20;
+    double cosine_of_angle = dot_product / (magnitude_a * magnitude_b);
+    double angle_rad = std::acos(cosine_of_angle);
+    return angle_rad;
+}
 double cal_similarity_of_vect(std::vector<double> a, std::vector<double> b) {
     double dot_product = a[0] * b[0] + a[1] * b[1];
     double magnitude_a = std::sqrt(a[0] * a[0] + a[1] * a[1]);

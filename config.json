@@ -1,7 +1,7 @@
 {
     "robot_num" : 3,
     "leader_id" : 1,
-    "show_robot": [true, false, false],
+    "show_robot": [true, true, true],
     "show_heartbeat" : true,
     "show_compass" : false,
     "show_gps" : false,
@@ -9,8 +9,8 @@
     "send_heartbeat" : true,
     "weight_name" : ["heading","dis_obs", "velo", "phi", "dis_vert", "dis_goal"],
     "weight_gain" : [    1.0 ,     0.0 ,    1.0 ,  1.0 ,     1.0 ,       1.0],
-    "goal_pos" : [   2.0, 2.0,  0.0],
-    "sim_time" : 4.0,
+    "goal_pos" : [   1.0, 1.0,  0],
+    "sim_time" : 2.0,
     "run_time": 0.1
 }
 
